@@ -91,6 +91,7 @@ public class Star {
 				+ starSize / 2, this.y + starSize / 2, color));
 		lines.add(new Line(this.x + starSize / 2, this.y - starSize / 2, this.x
 				- starSize / 2, this.y + starSize / 2, color));
+		
 		// Add each line to the window
 		for (Line l : lines) {
 			this.window.add(l);
