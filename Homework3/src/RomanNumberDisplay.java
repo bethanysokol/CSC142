@@ -6,12 +6,12 @@ import java.awt.Color; // avoid writing java.awt.* since the package has a
 import java.awt.Font;
 
 /**
- * CSC 142 - Homework<br>
- * A RomanNumberDisplay has a window that can display a RomanNumber.<br>
+ * CSC 142 - Homework 3
+ * A RomanNumberDisplay has a window that can display a RomanNumber.
  * Buttons allow the user to enter a new number to display, or to add 1 to or
- * subtract 1 from the current number.<br>
+ * subtract 1 from the current number.
  * 
- * @author <Your name here>
+ * @author Bethany Dubeck
  */
 
 public class RomanNumberDisplay extends GWindowEventAdapter {

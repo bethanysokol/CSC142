@@ -6,14 +6,14 @@ import java.awt.Color;
 import javax.swing.JOptionPane;
 
 /**
- * CSC 142 - Homework<br>
+ * CSC 142 - Homework 3
  * A RomanNumber is the representation in decimal and Roman numerals of an
- * integer between 1 and 3000.<br>
- * The number is displayed in a graphics window.<br>
+ * integer between 1 and 3000.
+ * The number is displayed in a graphics window.
  * A RomanNumber can be incremented, decremented or changed via interactive
  * input.
  * 
- * @author <your name here>
+ * @author Bethany Dubeck
  */
 
 public class RomanNumber {
