@@ -6,10 +6,9 @@ import java.awt.Color; // avoid writing java.awt.* since the package has a
 import java.awt.Font;
 
 /**
- * CSC 142 - Homework 3
- * A RomanNumberDisplay has a window that can display a RomanNumber.
- * Buttons allow the user to enter a new number to display, or to add 1 to or
- * subtract 1 from the current number.
+ * CSC 142 - Homework 3 A RomanNumberDisplay has a window that can display a
+ * RomanNumber. Buttons allow the user to enter a new number to display, or to
+ * add 1 to or subtract 1 from the current number.
  * 
  * @author Bethany Dubeck
  */
@@ -19,11 +18,18 @@ public class RomanNumberDisplay extends GWindowEventAdapter {
 	// respond to mouse clicks on a graphics window.
 
 	// Instance fields
+	private Rectangle plusOneButton;
+	private Rectangle minusOneButton;
+	private Rectangle newNumberButton;
+	private Color bckgrndColor;
+	
+
 	// Graphics window
 	private GWindow window;
 
 	// The RomanNumber being displayed
 	private RomanNumber rNumber;
+	private Font font;
 
 	// Add here other instance fields as needed
 
@@ -36,13 +42,37 @@ public class RomanNumberDisplay extends GWindowEventAdapter {
 		window.setExitOnClose();
 		// This RomanNumberDisplay handles the mouse clicks
 		window.addEventHandler(this);
+		font = Font.getFont(Font.SANS_SERIF);
+		this.rNumber = new RomanNumber(window);
+		drawButtons();
+		// Initialize the instance fields
+	}
+
+	private void drawButtons() {
+		int height = 25;
+		int width = 90;
 
 		// Buttons...
-		// If you find yourself writing lots of line of code in the constructor,
-		// move the code into a private method that you call from here.
-
-		// Add the RomanNumber rNumber...
+		this.plusOneButton = new Rectangle(125, 150, width, height, Color.BLACK,
+				true);
+		TextShape plusOneButtonLbl = new TextShape("Plus One", 125, 150,
+				Color.WHITE, font);
+		this.minusOneButton = new Rectangle(225, 150, width, height,
+				Color.BLACK, true);
+		TextShape minusOneButtonLbl = new TextShape("Minus One", 225, 150, Color.WHITE, font);
+		this.newNumberButton = new Rectangle(325, 150, width, height,
+				Color.BLACK, true);
+		TextShape newNumberButtonLbl = new TextShape("New Number", 325, 150,Color.WHITE, font);
+		window.add(plusOneButton);
+		window.add(minusOneButton);
+		window.add(newNumberButton);
+		window.add(plusOneButtonLbl);
+		window.add(minusOneButtonLbl);
+		window.add(newNumberButtonLbl);
+		
 	}
+
+	// Add the RomanNumber rNumber...
 
 	/**
 	 * A mouse button has been pressed on the window.<br>
@@ -56,6 +86,17 @@ public class RomanNumberDisplay extends GWindowEventAdapter {
 		// Locate the click
 		int x = e.getX();
 		int y = e.getY();
+		
+		Rectangle mouseClick = new Rectangle(e.getX(),e.getY(), 0,0);
+		if(plusOneButton.intersects(mouseClick)){
+		rNumber.plusOne();
+		}
+		if(minusOneButton.intersects(mouseClick)){
+			rNumber.minusOne();
+		}
+		if(newNumberButton.intersects(mouseClick)){
+			rNumber.inputNewNumber();
+		}
 
 		// Click on the left button?
 		// (if the left button is "plus one", tell rNumber
@@ -65,6 +106,7 @@ public class RomanNumberDisplay extends GWindowEventAdapter {
 		// If you need to update the display, use the method doRepaint() as in
 		// window.doRepaint();
 	}
+
 
 	/**
 	 * Starts the application

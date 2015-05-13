@@ -1,17 +1,17 @@
 // Some useful libraries
 import uwcse.graphics.*;
 import uwcse.io.*;
+
 import java.awt.Font;
 import java.awt.Color;
+
 import javax.swing.JOptionPane;
 
 /**
- * CSC 142 - Homework 3
- * A RomanNumber is the representation in decimal and Roman numerals of an
- * integer between 1 and 3000.
- * The number is displayed in a graphics window.
- * A RomanNumber can be incremented, decremented or changed via interactive
- * input.
+ * CSC 142 - Homework 3 A RomanNumber is the representation in decimal and Roman
+ * numerals of an integer between 1 and 3000. The number is displayed in a
+ * graphics window. A RomanNumber can be incremented, decremented or changed via
+ * interactive input.
  * 
  * @author Bethany Dubeck
  */
@@ -36,6 +36,8 @@ public class RomanNumber {
 
 	private int dNumber; // the number to display
 
+	private TextShape numeralDisplay;
+
 	/**
 	 * Creates the display of a number in Roman numerals in a given graphics
 	 * window.<br>
@@ -53,6 +55,22 @@ public class RomanNumber {
 
 		// Ask for the number and display it
 		// (to do so, you might want to call other methods in the class)
+		this.inputNewNumber();
+	}
+
+	public void displayRomanNumerals() {
+		if (numeralDisplay != null) {
+			window.remove(numeralDisplay);
+		}
+
+		numeralDisplay = new TextShape(translateNumber(), 400, 100,
+				Color.BLACK, font);
+		window.add(numeralDisplay);
+	}
+
+	private String translateNumber() {
+		// TODO return roman numeral
+		return Integer.toString(dNumber);
 	}
 
 	/**
@@ -62,18 +80,36 @@ public class RomanNumber {
 	 * don't change the display.
 	 */
 	public void inputNewNumber() {
+		Input in = new Input();
+		int inputVal = in.readIntDialog("Text");
+		if (inputVal < 1 || inputVal > MAX_NUMBER) {
+
+			System.err.println("Bad input");
+		} else {
+			dNumber = inputVal;
+			displayRomanNumerals();
+		}
 	}
 
 	/**
 	 * Adds one to this RomanNumber (if < MAX_NUMBER).
 	 */
 	public void plusOne() {
+		if (dNumber < MAX_NUMBER) {
+
+			dNumber++;
+			displayRomanNumerals();
+		}
 	}
 
 	/**
 	 * Subtracts one from this RomanNumber (if > 1)
 	 */
 	public void minusOne() {
+		if (dNumber > 1) {
+			dNumber--;
+			displayRomanNumerals();
+		}
 	}
 
 }
