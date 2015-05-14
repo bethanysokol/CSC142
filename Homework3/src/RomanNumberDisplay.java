@@ -43,26 +43,28 @@ public class RomanNumberDisplay extends GWindowEventAdapter {
 		// This RomanNumberDisplay handles the mouse clicks
 		window.addEventHandler(this);
 		font = Font.getFont(Font.SANS_SERIF);
-		this.rNumber = new RomanNumber(window);
-		drawButtons();
+		int displayHeight = (3*window.getWindowHeight())/4;
+		this.rNumber = new RomanNumber(window, displayHeight);
+		drawButtons(displayHeight);
 		// Initialize the instance fields
 	}
 
-	private void drawButtons() {
+	private void drawButtons(int romanNumeralDisplayHeight) {
+		int y = romanNumeralDisplayHeight;
 		int height = 25;
 		int width = 90;
 
 		// Buttons...
-		this.plusOneButton = new Rectangle(125, 150, width, height, Color.BLACK,
+		this.plusOneButton = new Rectangle(125, y, width, height, Color.BLACK,
 				true);
-		TextShape plusOneButtonLbl = new TextShape("Plus One", 125, 150,
+		TextShape plusOneButtonLbl = new TextShape("Plus One", 125, y,
 				Color.WHITE, font);
-		this.minusOneButton = new Rectangle(225, 150, width, height,
+		this.minusOneButton = new Rectangle(225, y, width, height,
 				Color.BLACK, true);
-		TextShape minusOneButtonLbl = new TextShape("Minus One", 225, 150, Color.WHITE, font);
-		this.newNumberButton = new Rectangle(325, 150, width, height,
+		TextShape minusOneButtonLbl = new TextShape("Minus One", 225, y, Color.WHITE, font);
+		this.newNumberButton = new Rectangle(325, y, width, height,
 				Color.BLACK, true);
-		TextShape newNumberButtonLbl = new TextShape("New Number", 325, 150,Color.WHITE, font);
+		TextShape newNumberButtonLbl = new TextShape("New Number", 325, y,Color.WHITE, font);
 		window.add(plusOneButton);
 		window.add(minusOneButton);
 		window.add(newNumberButton);

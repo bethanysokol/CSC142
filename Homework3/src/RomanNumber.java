@@ -4,6 +4,8 @@ import uwcse.io.*;
 
 import java.awt.Font;
 import java.awt.Color;
+import java.awt.font.FontRenderContext;
+import java.awt.geom.Rectangle2D;
 
 import javax.swing.JOptionPane;
 
@@ -20,6 +22,11 @@ public class RomanNumber {
 
 	/** Maximum number that can be displayed */
 	public static final int MAX_NUMBER = 3000;
+
+	private static final int[] ARABIC_NUMBER_ARRAY = { 1, 4, 5, 9, 10, 40, 50,
+			90, 100, 400, 500, 900, 1000 };
+	private static final String[] ROMAN_NUMERALS_ARRAY = { "I", "IV", "V",
+			"IX", "X", "XL", "L", "XC", "C", "CD", "D", "CM", "M" };
 
 	// instance fields
 	private TextShape text; // The label to display the number (center it in the
@@ -38,6 +45,8 @@ public class RomanNumber {
 
 	private TextShape numeralDisplay;
 
+	private int displayHeight;
+
 	/**
 	 * Creates the display of a number in Roman numerals in a given graphics
 	 * window.<br>
@@ -45,32 +54,79 @@ public class RomanNumber {
 	 * 
 	 * @param window
 	 *            the graphics window that displays the roman number.
+	 * @param displayHeight 
 	 */
-	public RomanNumber(GWindow window) {
+	public RomanNumber(GWindow window, int displayHeight) {
 		// This RomanNumber is displayed in the GWindow window
 		this.window = window;
 
 		// Create the font for the TextShape
-		// e.g. font = new Font("Courier",Font.BOLD,50);
+		font = new Font("Times New Roman", Font.BOLD, 50);
+		numeralDisplay = new TextShape("", 400, 80);
+		this.displayHeight = displayHeight;
+		window.add(numeralDisplay);
 
 		// Ask for the number and display it
 		// (to do so, you might want to call other methods in the class)
 		this.inputNewNumber();
 	}
 
-	public void displayRomanNumerals() {
-		if (numeralDisplay != null) {
-			window.remove(numeralDisplay);
-		}
-
-		numeralDisplay = new TextShape(translateNumber(), 400, 100,
-				Color.BLACK, font);
-		window.add(numeralDisplay);
+	public void updateDisplay() {
+		String val = translateNumber();
+		numeralDisplay.setText(val);
+		numeralDisplay.setColor(Color.BLACK);
+		numeralDisplay.setFont(font);
+		Rectangle2D bounding = font.getStringBounds(val, new FontRenderContext(
+				null, true, true));
+		double textWidth = bounding.getMaxX();
+		double textHeight = bounding.getY()*-1;
+		int x = (int) ((window.getWindowWidth()/2) -(textWidth/2));
+		int y = (int) ((displayHeight/2) - (textHeight/2));
+		numeralDisplay.moveTo(x, y);
 	}
 
 	private String translateNumber() {
-		// TODO return roman numeral
-		return Integer.toString(dNumber);
+		int remainder = dNumber;
+		StringBuilder romanNumeral = new StringBuilder();
+		remainder = addRomanNumSec(remainder, romanNumeral, 1000, "M");
+		remainder = addRomanNumSec(remainder, romanNumeral, 900, "CM");
+		remainder = addRomanNumSec(remainder, romanNumeral, 500, "D");
+		remainder = addRomanNumSec(remainder, romanNumeral, 400, "CD");
+		remainder = addRomanNumSec(remainder, romanNumeral, 100, "C");
+		remainder = addRomanNumSec(remainder, romanNumeral, 90, "XC");
+		remainder = addRomanNumSec(remainder, romanNumeral, 50, "L");
+		remainder = addRomanNumSec(remainder, romanNumeral, 40, "XL");
+		remainder = addRomanNumSec(remainder, romanNumeral, 10, "X");
+		remainder = addRomanNumSec(remainder, romanNumeral, 9, "IX");
+		remainder = addRomanNumSec(remainder, romanNumeral, 5, "V");
+		remainder = addRomanNumSec(remainder, romanNumeral, 4, "IV");
+		remainder = addRomanNumSec(remainder, romanNumeral, 1, "I");
+		return romanNumeral.toString();
+	}
+
+	private int addRomanNumSec(int remainder, StringBuilder romanNumeral,
+			int arabicValue, String romanValue) {
+		if (arabicValue <= remainder) {
+			int quotient = remainder / arabicValue;
+			romanNumeral.append(repeat(romanValue, quotient));
+			remainder -= quotient * arabicValue;
+		}
+		return remainder;
+	}
+
+	public String repeat(String symbol, int times) {
+		String repeated = "";
+		if (times > 0) {
+			repeated += symbol;
+		}
+		if (times > 1) {
+			repeated += symbol;
+		}
+		if (times > 2) {
+			repeated += symbol;
+		}
+		// roman numerals never repeat more than three times
+		return repeated;
 	}
 
 	/**
@@ -87,7 +143,7 @@ public class RomanNumber {
 			System.err.println("Bad input");
 		} else {
 			dNumber = inputVal;
-			displayRomanNumerals();
+			updateDisplay();
 		}
 	}
 
@@ -98,7 +154,7 @@ public class RomanNumber {
 		if (dNumber < MAX_NUMBER) {
 
 			dNumber++;
-			displayRomanNumerals();
+			updateDisplay();
 		}
 	}
 
@@ -108,7 +164,7 @@ public class RomanNumber {
 	public void minusOne() {
 		if (dNumber > 1) {
 			dNumber--;
-			displayRomanNumerals();
+			updateDisplay();
 		}
 	}
 
