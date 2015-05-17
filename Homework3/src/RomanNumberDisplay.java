@@ -14,101 +14,130 @@ import java.awt.Font;
  */
 
 public class RomanNumberDisplay extends GWindowEventAdapter {
-	// By extending GWindowEventAdapter, a RomanNumberDisplay can
-	// respond to mouse clicks on a graphics window.
+	/*
+	 * By extending GWindowEventAdapter, a RomanNumberDisplay can respond to
+	 * mouse clicks on a graphics window.
+	 */
 
 	// Instance fields
+	/**
+	 * Height of the buttons
+	 */
+	private static final int BUTTON_DISPLAY_WIDTH = 90;
+	/**
+	 * Width of the buttons
+	 */
+	private static final int BUTTON_DISPLAY_HEIGHT = 25;
+	/**
+	 * Button that increments Roman numeral by one
+	 */
 	private Rectangle plusOneButton;
+	/**
+	 * Button that decrements Roman numeral by one
+	 */
 	private Rectangle minusOneButton;
+	/**
+	 * Button that prompts user for a new number
+	 */
 	private Rectangle newNumberButton;
-	private Color bckgrndColor;
-	
-
-	// Graphics window
+	/**
+	 * Graphics window
+	 */
 	private GWindow window;
-
-	// The RomanNumber being displayed
+	/**
+	 * The RomanNumber being displayed
+	 */
 	private RomanNumber rNumber;
+	/**
+	 * Font used for the buttons
+	 */
 	private Font font;
-
-	// Add here other instance fields as needed
 
 	/**
 	 * Create the display
 	 */
 	public RomanNumberDisplay() {
-		// Create the window (change the size if you wish)
+		// Create the window
 		window = new GWindow("Numbers in roman numerals", 690, 200);
 		window.setExitOnClose();
 		// This RomanNumberDisplay handles the mouse clicks
 		window.addEventHandler(this);
-		font = Font.getFont(Font.SANS_SERIF);
-		int displayHeight = (3*window.getWindowHeight())/4;
+		// set button label font
+		font = new Font("SANS_SERIF", Font.BOLD, 15);
+		// displayHeight used to create a specified area to draw the buttons in
+		int displayHeight = (3 * window.getWindowHeight()) / 4;
 		this.rNumber = new RomanNumber(window, displayHeight);
+		// calls method to draw the buttons
 		drawButtons(displayHeight);
-		// Initialize the instance fields
 	}
 
+	/**
+	 * Method to draw the buttons and button labels
+	 * 
+	 * @param romanNumeralDisplayHeight
+	 *            Reserved space for Roman numerals in which the buttons cannot
+	 *            be drawn.
+	 */
 	private void drawButtons(int romanNumeralDisplayHeight) {
 		int y = romanNumeralDisplayHeight;
-		int height = 25;
-		int width = 90;
+		// height of a button
+		int height = BUTTON_DISPLAY_HEIGHT;
+		// width of a button
+		int width = BUTTON_DISPLAY_WIDTH;
 
-		// Buttons...
-		this.plusOneButton = new Rectangle(125, y, width, height, Color.BLACK,
+		// Buttons
+		this.plusOneButton = new Rectangle(200, y, width, height, Color.BLACK,
 				true);
-		TextShape plusOneButtonLbl = new TextShape("Plus One", 125, y,
+		// Label for incrementing button
+		TextShape plusOneButtonLbl = new TextShape("Plus One", 213, y,
 				Color.WHITE, font);
-		this.minusOneButton = new Rectangle(225, y, width, height,
+		this.minusOneButton = new Rectangle(300, y, width, height, Color.BLACK,
+				true);
+		// Label for decrementing button
+		TextShape minusOneButtonLbl = new TextShape("Minus One", 307, y,
+				Color.WHITE, font);
+		this.newNumberButton = new Rectangle(400, y, width, height,
 				Color.BLACK, true);
-		TextShape minusOneButtonLbl = new TextShape("Minus One", 225, y, Color.WHITE, font);
-		this.newNumberButton = new Rectangle(325, y, width, height,
-				Color.BLACK, true);
-		TextShape newNumberButtonLbl = new TextShape("New Number", 325, y,Color.WHITE, font);
+		// Label for new number button
+		TextShape newNumberButtonLbl = new TextShape("New Number", 400, y,
+				Color.WHITE, font);
+		// Add buttons and labels to the window
 		window.add(plusOneButton);
 		window.add(minusOneButton);
 		window.add(newNumberButton);
 		window.add(plusOneButtonLbl);
 		window.add(minusOneButtonLbl);
 		window.add(newNumberButtonLbl);
-		
 	}
 
-	// Add the RomanNumber rNumber...
-
 	/**
-	 * A mouse button has been pressed on the window.<br>
-	 * Detects the location of the click and take proper action (do nothing or
-	 * increment or decrement the number, or input and display a new number).
+	 * A mouse button has been pressed on the window. Detects the location of
+	 * the click and take proper action (do nothing or increment or decrement
+	 * the number, or input and display a new number).
 	 * 
 	 * @param e
 	 *            the GWindowEvent triggered by the mouse click
 	 */
 	public void mousePressed(GWindowEvent e) {
-		// Locate the click
-		int x = e.getX();
-		int y = e.getY();
-		
-		Rectangle mouseClick = new Rectangle(e.getX(),e.getY(), 0,0);
-		if(plusOneButton.intersects(mouseClick)){
-		rNumber.plusOne();
+		/*
+		 * Created a box that finds the mouse click. If any of the buttons
+		 * intersect with the box in which the mouse click occurred, then it
+		 * will call the appropriate method. If two or more buttons overlap, it
+		 * is possible that both functions could trigger. The last function to
+		 * execute has the highest priority, the +/- buttons will execute before
+		 * prompting for a new number for the user's sake.
+		 */
+		Rectangle mouseClick = new Rectangle(e.getX(), e.getY(), 0, 0);
+		if (plusOneButton.intersects(mouseClick)) {
+			rNumber.plusOne();
 		}
-		if(minusOneButton.intersects(mouseClick)){
+		if (minusOneButton.intersects(mouseClick)) {
 			rNumber.minusOne();
 		}
-		if(newNumberButton.intersects(mouseClick)){
+		if (newNumberButton.intersects(mouseClick)) {
 			rNumber.inputNewNumber();
 		}
-
-		// Click on the left button?
-		// (if the left button is "plus one", tell rNumber
-		// to increment itself by one: rNumber.addOne();)
-		// etc...
-
-		// If you need to update the display, use the method doRepaint() as in
-		// window.doRepaint();
 	}
-
 
 	/**
 	 * Starts the application
@@ -117,5 +146,4 @@ public class RomanNumberDisplay extends GWindowEventAdapter {
 		new RomanNumberDisplay();
 	}
 
-	// Add your private methods here
 }
