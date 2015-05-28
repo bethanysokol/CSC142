@@ -1,14 +1,24 @@
+import uwcse.io.Input;
+
 /**
  * Given a month and a year, construct the corresponding calendar for that month
  * and year.
  */
 
 public class Calendar {
+	/** 
+	 * Maximum month that can be displayed or input 
+	 */
+	public static final int MAX_MONTH_NUMBER = 12;
+
 	// Instance fields to compute the calendar
 	private int month;
 
 	private int year;
-
+	/**
+	 * the user generated number to display
+	 */
+	private int dNumber;
 	// Reference point
 	// 1/1/1 is a Monday
 	private final int REF_YEAR = 1;
@@ -52,5 +62,30 @@ public class Calendar {
 		return output;
 	}
 
-	// Add your own private methods below
+	/**
+	 * Changes this RomanNumber to the new value given interactively by the
+	 * user. If the value given by the user is invalid, display an error message
+	 * and doesn't change the display.
+	 */
+	public void inputNewCalendar() {
+		/*
+		 * Pops open a window when the user clicks "new calendar", and prompts for
+		 * input.
+		 */
+		Input in = new Input();
+		int inputVal = in.readIntDialog("Input a month");
+		/*
+		 * If user input is less than one or more than max number, display an
+		 * error message in the console. Display does not change per the
+		 * requirements.
+		 */
+		if (inputVal < 1 || inputVal > MAX_MONTH_NUMBER) {
+
+			System.err
+					.println("Not a valid number, please enter a number between 1-12");
+		} else {
+			dNumber = inputVal;
+			//updateDisplay();
+		}
+}
 }
