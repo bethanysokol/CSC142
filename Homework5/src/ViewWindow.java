@@ -193,6 +193,7 @@ public class ViewWindow extends JPanel implements ActionListener {
 
 				g.fillArc(arc.getX(), arc.getY(), arc.getWidth(), arc
 						.getHeight(), startAngle, arcAngle);
+				
 			}
 		} else if (this.which == ViewWindow.STRIPES) {
 			// Stripes

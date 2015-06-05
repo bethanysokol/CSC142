@@ -23,7 +23,11 @@ public class GraphicsElements {
 
 	/** Maximum number of divisions in a Koch snow flake */
 	public static final int MAXIMUM_NUMBER_OF_DIVISIONS = 5;
-	
+
+	public static final int CENTER_X = 200;
+
+	public static final int CENTER_Y = 150;
+
 	// The window is 400 pixels wide and 300 pixels high
 
 	/**
@@ -36,17 +40,19 @@ public class GraphicsElements {
 	 * appears in the pie when drawing it.
 	 */
 	public ArrayList createAPie() {
-		ArrayList graphicsList = new ArrayList();
+		Input in = new Input();
+		int inputVal = in.readIntDialog("Number of wedges (between 1 and 100)");
 
-		List<Arc> wedges;
-		if (wedges == null) {
-			wedges = new ArrayList<Arc>(3);
-		} else {
-			wedges.clear();
-		}
-		wedges.add(createLegPair(color, height, height));
-		for (Arc w : wedges) {
-			this.frame.add(w);
+		ArrayList graphicsList = new ArrayList<Arc>(inputVal);
+
+		int wedgeSize = (int) Math.ceil(360.0 / inputVal);
+		int currentAngle = 0;
+		for (int i = 0; i < inputVal; i++) {
+			Color c = generateRandomColor();
+			graphicsList.add(new Arc(CENTER_X, CENTER_Y, 100, 100,
+					currentAngle, wedgeSize, c, false));
+			currentAngle += wedgeSize;
+
 		}
 
 		return graphicsList;
@@ -62,8 +68,24 @@ public class GraphicsElements {
 	 * JOptionPane.showMessageDialog)and ask for it again.
 	 */
 	public ArrayList createStripes() {
-		ArrayList graphicsList = new ArrayList();
-		// Add your code here
+		Input in = new Input();
+		int inputVal = in.readIntDialog("Number of stripes (between 1 and 15)");
+		ArrayList graphicsList = new ArrayList(inputVal * inputVal * 2);
+		Color[] colors = { generateRandomColor(), generateRandomColor() };
+		int squareWidth = 400 / inputVal;
+		int squareHeight = 300 / inputVal;
+		for (int row = 0; row < inputVal; row++) {
+			int top = row * squareHeight;
+			int bottom = (row + 1) * squareHeight;
+			for (int column = 0; column < inputVal; column++) {
+				int left = column * squareWidth;
+				int right = (column + 1) * squareWidth;
+				graphicsList.add(new Triangle(left, top, right, top, right,
+						bottom, colors[(row + column) % 2], true));
+				graphicsList.add(new Triangle(left, top, left, bottom, right,
+						bottom, colors[((row + column) + 1) % 2], true));
+			}
+		}
 
 		return graphicsList;
 	}
@@ -81,8 +103,42 @@ public class GraphicsElements {
 	 */
 	public ArrayList createASnowFlake() {
 		ArrayList graphicsList = new ArrayList();
-		// Add your code here
+		Input in = new Input();
+		int inputVal = in
+				.readIntDialog("Number of divisions (between 1 and 5)");
 
+		int sideLength = 200;
+		int x = 100;
+		int y = 75;
+		graphicsList.add(new Point(x, y));
+		graphicsList.add(new Point((sideLength + x), y));
+		graphicsList.add(new Point(((sideLength / 2) + x),
+				(int) (y + sideLength * Math.sin(Math.PI / 3))));
+		for (int division = 1; division <= inputVal; division++) {
+
+			ArrayList original = (ArrayList) graphicsList.clone();
+			for (int i = 0; i < original.size(); i++) {
+				Point p = (Point) original.get(i);
+				int nextIndex = i + 1;
+				if (i == original.size() - 1) {
+					nextIndex = 0;
+				}
+				Point q = (Point) original.get(nextIndex);
+				Point a = new Point((int) (p.x + (q.x - p.x) / 3.0),
+						(int) (p.y + (q.y - p.y) / 3.0));
+				Point c = new Point((int) (p.x + 2 * (q.x - p.x) / 3.0),
+						(int) (p.y + 2 * (q.y - p.y) / 3.0));
+				Point b = new Point();
+				b.x = (int) (a.x + (c.x - a.x) * Math.cos(Math.PI / 3.0) + (c.y - a.y)
+						* Math.sin(Math.PI / 3.0));
+				b.y = (int) (a.y - (c.x - a.x) * Math.sin(Math.PI / 3.0) + (c.y - a.y)
+						* Math.cos(Math.PI / 3.0));
+				graphicsList.add(4 * i + 1, c);
+				graphicsList.add(4 * i + 1, b);
+				graphicsList.add(4 * i + 1, a);
+
+			}
+		}
 		return graphicsList;
 	}
 
@@ -91,7 +147,20 @@ public class GraphicsElements {
 	 * graphicsList describes a pie Return the updated ArrayList
 	 */
 	public ArrayList rotateColorsInPie(ArrayList graphicsList) {
-		// Add your code here
+		ArrayList<Arc> arcList = graphicsList;
+
+		Color previous = null;
+		for (int i = arcList.size() - 1; i >= 0; i--) {
+			Color next = arcList.get(i).getColor();
+			if (previous == null) {
+
+				previous = next;
+				continue;
+			}
+			arcList.get(i).setColor(previous);
+			previous = next;
+		}
+		arcList.get(arcList.size() - 1).setColor(previous);
 
 		return graphicsList;
 	}
@@ -101,7 +170,15 @@ public class GraphicsElements {
 	 * describes a pattern of stripes Return the updated ArrayList
 	 */
 	public ArrayList flipColorsInStripes(ArrayList graphicsList) {
-		// Add your code here
+		ArrayList<Triangle> triList = graphicsList;
+
+		for (int i = 0; i < triList.size() - 1; i += 2) {
+			Color top = triList.get(i).getColor();
+			Color bottom = triList.get(i + 1).getColor();
+			triList.get(i).setColor(bottom);
+			triList.get(i + 1).setColor(top);
+
+		}
 
 		return graphicsList;
 	}
@@ -113,13 +190,16 @@ public class GraphicsElements {
 	 * to the snow flake.
 	 */
 	public Color changeColorOfSnowFlake() {
+		return generateRandomColor();
+	}
+
+	public Color generateRandomColor() {
 		// Generates the color randomly
 		// Math.random() returns a random double between 0 and 1
 		// 0 <= Math.random() < 1
 		int red = (int) (256 * Math.random());
 		int green = (int) (256 * Math.random());
 		int blue = (int) (256 * Math.random());
-		Color color = new Color(red, green, blue);
-		return Color.red; // CHANGE THIS
+		return new Color(red, green, blue);
 	}
 }
