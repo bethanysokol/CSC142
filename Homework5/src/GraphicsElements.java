@@ -1,15 +1,19 @@
 import java.awt.Color;
 import java.util.*;
 import java.awt.Point;
+
 import uwcse.io.*;
 import uwcse.graphics.*;
+
 import javax.swing.*;
 
 /**
  * A class to create and manipulate graphics elements stored in an ArrayList
+ * 
+ * @author Bethany Dubeck
  */
 
-public class GraphicsElements { 
+public class GraphicsElements {
 
 	/** Maximum number of wedges in a pie */
 	public static final int MAXIMUM_NUMBER_OF_PIE_WEDGES = 100;
@@ -19,7 +23,7 @@ public class GraphicsElements {
 
 	/** Maximum number of divisions in a Koch snow flake */
 	public static final int MAXIMUM_NUMBER_OF_DIVISIONS = 5;
-
+	
 	// The window is 400 pixels wide and 300 pixels high
 
 	/**
@@ -34,7 +38,16 @@ public class GraphicsElements {
 	public ArrayList createAPie() {
 		ArrayList graphicsList = new ArrayList();
 
-		// Add your code here
+		List<Arc> wedges;
+		if (wedges == null) {
+			wedges = new ArrayList<Arc>(3);
+		} else {
+			wedges.clear();
+		}
+		wedges.add(createLegPair(color, height, height));
+		for (Arc w : wedges) {
+			this.frame.add(w);
+		}
 
 		return graphicsList;
 	}
@@ -100,6 +113,13 @@ public class GraphicsElements {
 	 * to the snow flake.
 	 */
 	public Color changeColorOfSnowFlake() {
+		// Generates the color randomly
+		// Math.random() returns a random double between 0 and 1
+		// 0 <= Math.random() < 1
+		int red = (int) (256 * Math.random());
+		int green = (int) (256 * Math.random());
+		int blue = (int) (256 * Math.random());
+		Color color = new Color(red, green, blue);
 		return Color.red; // CHANGE THIS
 	}
 }
