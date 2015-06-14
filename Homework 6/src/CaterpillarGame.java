@@ -53,7 +53,7 @@ public class CaterpillarGame extends GWindowEventAdapter implements
 	public CaterpillarGame() {
 		// Create the graphics window
 		window = new GWindow("Caterpillar game", WINDOW_WIDTH, WINDOW_HEIGHT);
-
+		window.setExitOnClose();
 		// Any key or timer event while the window is active is sent to this
 		// CaterpillarGame
 		window.addEventHandler(this);
@@ -66,7 +66,7 @@ public class CaterpillarGame extends GWindowEventAdapter implements
 		JOptionPane.showMessageDialog(null,
 				"Eat all of the non red cabbage heads, \n"
 						+ "and exit the garden. \n"
-						+ "Don't leave the window. \n" 
+						+ "Don't leave the window. \n"
 						+ "Don't eat the red cabbage heads. \n"
 						+ "Don't crawl over yourself. \n"
 						+ "To move left, press 'J' or 'A'. \n"
@@ -77,6 +77,10 @@ public class CaterpillarGame extends GWindowEventAdapter implements
 
 				JOptionPane.INFORMATION_MESSAGE);
 
+		beginPlaying();
+	}
+
+	public void beginPlaying() {
 		// start timer events (to do the animation)
 		this.window.startTimerEvents(ANIMATION_PERIOD);
 	}
@@ -105,6 +109,12 @@ public class CaterpillarGame extends GWindowEventAdapter implements
 		fence = new Fence(window, 50, 100);
 		fence.draw();
 		obstacles.add(fence);
+		List<Collidable> caterpillarAwareObstacles= (List<Collidable>) obstacles.clone();
+		
+		// Create the caterpillar
+		cp = new Caterpillar(window, caterpillarAwareObstacles);
+		obstacles.add(cp);
+		
 		// Cabbages
 		// ...
 		cabbages = new ArrayList<Cabbage>(N_GOOD_CABBAGES + N_BAD_CABBAGES
@@ -115,7 +125,8 @@ public class CaterpillarGame extends GWindowEventAdapter implements
 			objectives.add(c);
 		}
 		for (int i = 0; i < N_BAD_CABBAGES; i++) {
-			cabbages.add(Cabbage.spawnBadCabbage(window, fence, cabbages));
+			Cabbage c = Cabbage.spawnBadCabbage(window, fence, cabbages);
+			cabbages.add(c);
 		}
 		for (int i = 0; i < N_PSYCHEDELIC_CABBAGES; i++) {
 			Cabbage c = Cabbage
@@ -127,9 +138,6 @@ public class CaterpillarGame extends GWindowEventAdapter implements
 		// Initialize the elements of the ArrayList = cabbages
 		// (they should not overlap and be in the garden) ....
 
-		// Create the caterpillar
-		cp = new Caterpillar(window);
-		obstacles.add(cp);
 	}
 
 	/**
@@ -229,6 +237,7 @@ public class CaterpillarGame extends GWindowEventAdapter implements
 		boolean again = anotherGame(messageGameOver);
 		if (again) {
 			initializeGame();
+			beginPlaying();
 		} else {
 			System.exit(0);
 		}

@@ -61,12 +61,7 @@ public class Fence implements Collidable{
 	}
 	@Override
 	public boolean isCollision(Caterpillar cat) {
-		Shape head = cat.getBufferedHead();
-		boolean collision = false;
-		for (Shape line : fenceRails) {
-			collision = collision || line.intersects(head);
-		}
-		return collision;
+		return isCollision(cat.getBufferedHead());
 	}
 
 	public Point randomPoint(int buffer) {
@@ -82,6 +77,15 @@ public class Fence implements Collidable{
 	@Override
 	public void doCollideAction(Caterpillar cat) {
 		cat.selectNewRandomDir();
+	}
+
+	@Override
+	public boolean isCollision(Shape head) {
+		boolean collision = false;
+		for (Shape line : fenceRails) {
+			collision = collision || line.intersects(head);
+		}
+		return collision;
 	}
 
 }

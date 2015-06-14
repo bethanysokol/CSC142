@@ -18,6 +18,7 @@ public abstract class Cabbage implements Collidable, CaterpillarGameConstants {
 	protected Point center;
 
 	protected Oval head;
+
 	/**
 	 * Creates a cabbage in the graphics window
 	 * 
@@ -68,29 +69,33 @@ public abstract class Cabbage implements Collidable, CaterpillarGameConstants {
 
 	@Override
 	public boolean isCollision(Caterpillar cat) {
-		return cat.getHead().intersects(head);
+		return isCollision(cat.getHead());
+	}
 
+	@Override
+	public boolean isCollision(Shape head) {
+		return head.intersects(this.head);
 	}
 
 	@Override
 	public void doCollideAction(Caterpillar cat) {
 		isEatenBy(cat);
 	}
-	
+
 	public static Cabbage spawnGoodCabbage(GWindow window, Fence fence,
 			ArrayList<Cabbage> cabbages) {
-		Point p = fence.randomPoint(CABBAGE_RADIUS);
-		Cabbage candidate = new GoodCabbage(window, p);
-		if (!candidate.isValidPlacement(cabbages)) {
-			candidate = spawnGoodCabbage(window, fence, cabbages);
-		}
+		Cabbage candidate = null;
+		do {
+			Point p = fence.randomPoint(CABBAGE_RADIUS);
+			candidate = new GoodCabbage(window, p);
+		} while (!candidate.isValidPlacement(cabbages));
 		candidate.draw();
 		return candidate;
 	}
 
 	private boolean isValidPlacement(ArrayList<Cabbage> cabbages) {
-		for(Cabbage other:cabbages){
-			if(this.head.intersects(other.head)){
+		for (Cabbage other : cabbages) {
+			if (this.head.intersects(other.head)) {
 				return false;
 			}
 		}
@@ -99,31 +104,32 @@ public abstract class Cabbage implements Collidable, CaterpillarGameConstants {
 
 	public static Cabbage spawnBadCabbage(GWindow window, Fence fence,
 			ArrayList<Cabbage> cabbages) {
-		Point p = fence.randomPoint(CABBAGE_RADIUS);
-		Cabbage candidate = new BadCabbage(window, p);
-		if (!candidate.isValidPlacement(cabbages)) {
-			candidate = spawnBadCabbage(window, fence, cabbages);
-		}
+		Cabbage candidate = null;
+		do {
+			Point p = fence.randomPoint(CABBAGE_RADIUS);
+			candidate = new BadCabbage(window, p);
+		} while (!candidate.isValidPlacement(cabbages));
+		candidate.draw();
+		return candidate;
+	}
+	
+	public static Cabbage spawnPsychedelicCabbage(GWindow window, Fence fence,
+			ArrayList<Cabbage> cabbages) {
+		Cabbage candidate = null;
+		do {
+			Point p = fence.randomPoint(CABBAGE_RADIUS);
+			candidate = new PsychedelicCabbage(window, p);
+		} while (!candidate.isValidPlacement(cabbages));
 		candidate.draw();
 		return candidate;
 	}
 
 	public void makeHead(Color color) {
 		head = new Oval(this.center.x - CABBAGE_RADIUS / 2, this.center.y
-				- CABBAGE_RADIUS / 2, CABBAGE_RADIUS, CABBAGE_RADIUS,
-				color, true);
-		
+				- CABBAGE_RADIUS / 2, CABBAGE_RADIUS, CABBAGE_RADIUS, color,
+				true);
+
 	}
 
-	public static Cabbage spawnPsychedelicCabbage(GWindow window, Fence fence,
-			ArrayList<Cabbage> cabbages) {
-		Point p = fence.randomPoint(CABBAGE_RADIUS);
-		Cabbage candidate = new PsychedelicCabbage(window, p);
-		if (!candidate.isValidPlacement(cabbages)) {
-			candidate = spawnPsychedelicCabbage(window, fence, cabbages);
-		}
-		candidate.draw();
-		return candidate;
-	}
 
 }

@@ -2,6 +2,7 @@ import java.awt.Color;
 import java.awt.Point;
 
 import uwcse.graphics.GWindow;
+import uwcse.graphics.Shape;
 
 
 public class BadCabbage extends Cabbage {
@@ -17,5 +18,6 @@ public class BadCabbage extends Cabbage {
 		throw new DeadlyCollisionException("Don't eat the poisionous cabbages!");
 
 	}
+
 
 }

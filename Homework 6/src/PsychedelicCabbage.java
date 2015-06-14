@@ -12,7 +12,7 @@ public class PsychedelicCabbage extends Cabbage {
 	public PsychedelicCabbage(GWindow window, Point center) {
 		super(window, center);
 
-		super.makeHead(Color.WHITE);
+		super.makeHead(Color.MAGENTA);
 	}
 
 	@Override
@@ -20,10 +20,10 @@ public class PsychedelicCabbage extends Cabbage {
 		super.draw();
 		int headSize = CABBAGE_RADIUS / 2;
 		middleHead = new Oval(this.center.x - headSize / 2, this.center.y
-				- headSize / 2, headSize, headSize, Color.YELLOW, true);
+				- headSize / 2, headSize, headSize, Color.WHITE, true);
 		headSize = CABBAGE_RADIUS / 4;
 		centerHead = new Oval(this.center.x - headSize / 2, this.center.y
-				- headSize/2, headSize, headSize, Color.BLUE, true);
+				- headSize/2, headSize, headSize, Color.BLACK, true);
 		window.add(middleHead);
 		window.add(centerHead);
 	}
@@ -34,6 +34,7 @@ public class PsychedelicCabbage extends Cabbage {
 		window.remove(middleHead);
 		window.remove(head);
 		cp.psych();
+		cp.grow();
 	}
 
 }

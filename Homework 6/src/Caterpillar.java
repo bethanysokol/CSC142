@@ -20,6 +20,9 @@ public class Caterpillar extends Deadly implements CaterpillarGameConstants {
 	// Direction of motion of the caterpillar (NORTH initially)
 	private int dir = NORTH;
 
+	// obstacles that the caterpillar is aware of
+	private List<Collidable> obstacles;
+
 	private static final int thickness = 10;
 
 	private static final int[] directions = { NORTH, EAST, SOUTH, WEST };
@@ -30,7 +33,7 @@ public class Caterpillar extends Deadly implements CaterpillarGameConstants {
 	 * @param window
 	 *            the graphics where to draw the caterpillar.
 	 */
-	public Caterpillar(GWindow window) {
+	public Caterpillar(GWindow window, List<Collidable> obstacles) {
 		// Initialize the graphics window for this Caterpillar
 		this.window = window;
 
@@ -40,12 +43,14 @@ public class Caterpillar extends Deadly implements CaterpillarGameConstants {
 		p.x = 5;
 		p.y = WINDOW_HEIGHT / 2;
 
+		this.obstacles = obstacles;
+
 		// Other points
 		for (int i = 0; i < 9; i++) {
 			Point q = new Point(p);
 			q.translate(STEP, 0);
 			body.add(new Rectangle(p.x, p.y, Math.abs(p.x - q.x), thickness,
-					Color.RED, true));
+					Color.ORANGE, true));
 			p = q;
 		}
 
@@ -90,61 +95,73 @@ public class Caterpillar extends Deadly implements CaterpillarGameConstants {
 
 	public void growNewHead(int newDir) {
 		Shape oldHead = getHead();
-		int x = oldHead.getX();
-		int y = oldHead.getY();
-		int w = oldHead.getWidth();
-		int h = oldHead.getHeight();
+		Shape newHead = null;
+		HashSet<Integer> knownBadDirs = new HashSet<Integer>();
+		knownBadDirs.add(getOppositeDirection());
+		do {
+			int x = oldHead.getX();
+			int y = oldHead.getY();
+			int w = oldHead.getWidth();
+			int h = oldHead.getHeight();
+			if (newHead != null) {
+				knownBadDirs.add(newDir);
+				newDir = selectNewRandomDir(knownBadDirs);
+			}
+			if (newDir == NORTH) {
 
-		if ((newDir == NORTH && dir == SOUTH)
+				if (dir == EAST) {
+					x += oldHead.getWidth() - thickness;
+				}
+				y -= STEP;
+				w = thickness;
+				h = STEP;
+			} else if (newDir == EAST) {
+				if (dir == SOUTH) {
+					y += oldHead.getHeight() - thickness;
+				}
+				x += oldHead.getWidth();
+				w = STEP;
+				h = thickness;
+			} else if (newDir == SOUTH) {
+				if (dir == EAST) {
+
+					x += oldHead.getWidth() - thickness;
+				}
+				y += oldHead.getHeight();
+				w = thickness;
+				h = STEP;
+			} else if (newDir == WEST) {
+				if (dir == SOUTH) {
+					y += oldHead.getHeight() - thickness;
+				}
+				x -= STEP;
+				w = STEP;
+				h = thickness;
+
+			}
+			newHead = new Rectangle(x, y, w, h, Color.ORANGE, true);
+		} while (!isSafeDirection(newHead, newDir));
+		dir = newDir;
+
+		body.add(newHead);
+		window.add(newHead);
+	}
+
+	public boolean isSafeDirection(Shape newHead, int newDir) {
+		boolean offEdge = newHead.getX() < 0 || newHead.getY() < 0
+				|| newHead.getY() > window.getWindowHeight()-STEP
+				|| newHead.getX() > window.getWindowWidth()-STEP;
+		boolean doubledBack = ((newDir == NORTH && dir == SOUTH)
 				|| (newDir == SOUTH && dir == NORTH)
-				|| (newDir == EAST && dir == WEST)
-				|| (newDir == WEST && dir == EAST)) {
-			newDir = selectNewRandomDir(newDir);
+				|| (newDir == EAST && dir == WEST) || (newDir == WEST && dir == EAST));
+		boolean hitObstacle = false;
+		obstacleCheck: for (Collidable c : obstacles) {
+			if (c.isCollision(newHead)) {
+				hitObstacle = true;
+				break obstacleCheck;
+			}
 		}
-
-		if (newDir == NORTH) {
-
-			if (dir == EAST) {
-				x += oldHead.getWidth() - thickness;
-			}
-			y -= STEP;
-			w = thickness;
-			h = STEP;
-		} else if (newDir == EAST) {
-			if (dir == SOUTH) {
-				y += oldHead.getHeight() - thickness;
-			}
-			x += oldHead.getWidth();
-			w = STEP;
-			h = thickness;
-		} else if (newDir == SOUTH) {
-			if (dir == EAST) {
-
-				x += oldHead.getWidth() - thickness;
-			}
-			y += oldHead.getHeight();
-			w = thickness;
-			h = STEP;
-		} else if (newDir == WEST) {
-			if (dir == SOUTH) {
-				y += oldHead.getHeight() - thickness;
-			}
-			x -= STEP;
-			w = STEP;
-			h = thickness;
-
-		}
-		if (x < 0 || y < 0 || y > window.getWindowHeight()
-				|| x > window.getWindowWidth()) {
-			growNewHead(selectNewRandomDir(newDir));
-		} else {
-
-			dir = newDir;
-			Rectangle newHead = new Rectangle(x, y, w, h, Color.RED, true);
-
-			body.add(newHead);
-			window.add(newHead);
-		}
+		return !doubledBack && !offEdge && !hitObstacle;
 	}
 
 	/**
@@ -154,16 +171,8 @@ public class Caterpillar extends Deadly implements CaterpillarGameConstants {
 	 *         otherwise.
 	 */
 	public boolean isCrawlingOverItself() {
-		// Is the head point equal to any other point of the caterpillar?
-		Shape head = getHead();
-		Shape bufferedHead = getBufferedHead();
 
-		for (Shape s : body) {
-			if (s != head && bufferedHead.intersects(s)) {
-				return true;
-			}
-		}
-		return false; // CHANGE THIS!
+		return isCollision(getBufferedHead());
 	}
 
 	/**
@@ -217,6 +226,19 @@ public class Caterpillar extends Deadly implements CaterpillarGameConstants {
 		return isCrawlingOverItself();
 	}
 
+	@Override
+	public boolean isCollision(Shape bufferedHead) {
+		// Is the head point equal to any other point of the caterpillar?
+		Shape head = getHead();
+
+		for (Shape s : body) {
+			if (s != head && bufferedHead.intersects(s)) {
+				return true;
+			}
+		}
+		return false; // CHANGE THIS!
+	}
+
 	public void psych() {
 		for (Shape s : body) {
 			s.setColor(generateRandomColor());
@@ -236,22 +258,39 @@ public class Caterpillar extends Deadly implements CaterpillarGameConstants {
 		return new Color(red, green, blue);
 	}
 
-	public int selectNewRandomDir(int invalidDir) {
-		int newDir = directions[(int) (Math.random() * (directions.length - 1))];
-		if (newDir != invalidDir && !isOppositeDirection(newDir)) {
-			return newDir;
-		} else {
-			return selectNewRandomDir(invalidDir);
+	public int selectNewRandomDir(HashSet<Integer> knownBadDirs) {
+		int index = (int) (Math.random() * directions.length);
+		int newDir = (int) knownBadDirs.toArray()[0];
+		while (knownBadDirs.contains(newDir)) {
+			if (knownBadDirs.size() == directions.length) {
+				throw new DeadlyCollisionException(
+						"You ran into a corner, there's no escape!");
+			}
+			index = (int) (Math.random() * directions.length);
+			newDir = directions[index];
 		}
+		return newDir;
+
 	}
 
-	private boolean isOppositeDirection(int newDir) {
-		return ((newDir == NORTH && dir == SOUTH)
-				|| (newDir == SOUTH && dir == NORTH)
-				|| (newDir == EAST && dir == WEST) || (newDir == WEST && dir == EAST));
+	private int getOppositeDirection() {
+		int retVal = -1;
+		if (dir == SOUTH) {
+			retVal = NORTH;
+		} else if (dir == NORTH) {
+			retVal = SOUTH;
+		} else if (dir == EAST) {
+			retVal = WEST;
+		} else if (dir == WEST) {
+			retVal = EAST;
+		}
+		return retVal;
 	}
 
 	public void selectNewRandomDir() {
-		move(selectNewRandomDir(dir));
+		HashSet<Integer> knownBadDir = new HashSet<Integer>();
+		knownBadDir.add(dir);
+		dir = selectNewRandomDir(knownBadDir);
 	}
+
 }
