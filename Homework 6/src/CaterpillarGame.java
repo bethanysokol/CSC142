@@ -12,39 +12,65 @@ import javax.swing.JOptionPane;
  * grows. The player wins when all of the good cabbages are eaten and the
  * caterpillar has left the garden. The player loses if the caterpillar eats a
  * bad cabbage or crawls over itself.
+ * 
+ * @author Bethany Dubeck
  */
 
 public class CaterpillarGame extends GWindowEventAdapter implements
 		CaterpillarGameConstants
-// The class inherits from GWindowEventAdapter so that it can handle key events
-// (in the method keyPressed), and timer events.
-// All of the code to make this class able to handle key events and perform
-// some animation is already written.
+/*
+ * The class inherits from GWindowEventAdapter so that it can handle key events
+ * (in the method keyPressed), and timer events.
+ */
 {
-	// Game window
+	/**
+	 * The window the game is in
+	 */
 	private GWindow window;
 
-	// The caterpillar
+	/**
+	 * The caterpillar that moves around eating cabbages
+	 */
 	private Caterpillar cp;
 
-	// Direction of motion given by the player
+	/**
+	 * Direction of motion given by the player
+	 */
 	private int dirFromKeyboard;
 
-	// Do we have a keyboard event
+	/**
+	 * Is there a keyboard event?
+	 */
 	private boolean isKeyboardEventNew = false;
 
-	// The list of all the cabbages
+	/**
+	 * The list of all the cabbages
+	 */
 	private ArrayList<Cabbage> cabbages;
 
-	// is the current game over?
+	/**
+	 * Is the current game over?
+	 */
 	private boolean gameOver;
 
+	/**
+	 * A message declaring the game is over
+	 */
 	private String messageGameOver;
 
+	/**
+	 * The fence around the garden play area
+	 */
 	private Fence fence;
 
+	/**
+	 * A list of various obstacles
+	 */
 	private LinkedList<Collidable> obstacles;
 
+	/**
+	 * A list of objects needed to win (cabbages to be eaten)
+	 */
 	private LinkedList<Collidable> objectives;
 
 	/**
@@ -55,14 +81,12 @@ public class CaterpillarGame extends GWindowEventAdapter implements
 		window = new GWindow("Caterpillar game", WINDOW_WIDTH, WINDOW_HEIGHT);
 		window.setExitOnClose();
 		// Any key or timer event while the window is active is sent to this
-		// CaterpillarGame
 		window.addEventHandler(this);
 
 		// Set up the game (fence, cabbages, caterpillar)
 		initializeGame();
 
 		// Display the game rules
-		// ...
 		JOptionPane.showMessageDialog(null,
 				"Eat all of the non red cabbage heads, \n"
 						+ "and exit the garden. \n"
@@ -80,6 +104,9 @@ public class CaterpillarGame extends GWindowEventAdapter implements
 		beginPlaying();
 	}
 
+	/**
+	 * Starts the game
+	 */
 	public void beginPlaying() {
 		// start timer events (to do the animation)
 		this.window.startTimerEvents(ANIMATION_PERIOD);
@@ -109,14 +136,14 @@ public class CaterpillarGame extends GWindowEventAdapter implements
 		fence = new Fence(window, 50, 100);
 		fence.draw();
 		obstacles.add(fence);
-		List<Collidable> caterpillarAwareObstacles= (List<Collidable>) obstacles.clone();
-		
+		List<Collidable> caterpillarAwareObstacles = (List<Collidable>) obstacles
+				.clone();
+
 		// Create the caterpillar
 		cp = new Caterpillar(window, caterpillarAwareObstacles);
 		obstacles.add(cp);
-		
+
 		// Cabbages
-		// ...
 		cabbages = new ArrayList<Cabbage>(N_GOOD_CABBAGES + N_BAD_CABBAGES
 				+ N_PSYCHEDELIC_CABBAGES);
 		for (int i = 0; i < N_GOOD_CABBAGES; i++) {
@@ -135,8 +162,6 @@ public class CaterpillarGame extends GWindowEventAdapter implements
 			objectives.add(c);
 		}
 		obstacles.addAll(cabbages);
-		// Initialize the elements of the ArrayList = cabbages
-		// (they should not overlap and be in the garden) ....
 
 	}
 
@@ -148,42 +173,51 @@ public class CaterpillarGame extends GWindowEventAdapter implements
 	 *            the timer event
 	 */
 	public void timerExpired(GWindowEvent e) {
-		// Did we get a new direction from the user?
-		// Use isKeyboardEventNew to take the event into account
-		// only once
+		/*
+		 * Did we get a new direction from the user? Use isKeyboardEventNew to
+		 * take the event into account only once
+		 */
 		if (isKeyboardEventNew) {
 			isKeyboardEventNew = false;
 			cp.move(dirFromKeyboard);
 		} else
 			cp.move();
-
-		// Is the caterpillar eating a cabbage? Is it crawling over itself?
-		// Is the game over? etc...
-		// (do all of these checks in a private method)...
+		// check to see if any collisions have occurred
 		checkCollisions();
-		// Is the game over?
-		// if (???) {
-		// endTheGame();
-		// }
 	}
 
+	/**
+	 * Checks for collisions that could end the game
+	 */
 	private void checkCollisions() {
+		// Array of cabbages that have been eaten
 		List<Collidable> eaten = new ArrayList<Collidable>();
 		for (Collidable c : obstacles) {
 			try {
+				/*
+				 * if the caterpillar collides with an object, take the
+				 * appropriate action
+				 */
 				if (c.isCollision(cp)) {
 					c.doCollideAction(cp);
+					// add eaten cabbages to the list
 					eaten.add(c);
 
 				}
+				// if the caterpillar eats a poisonous cabbage, end the game
 			} catch (DeadlyCollisionException e) {
 				this.messageGameOver = e.getMessage();
 				endTheGame();
 			}
 
 		}
+		// reset the game
 		obstacles.removeAll(eaten);
 		objectives.removeAll(eaten);
+		/*
+		 * if all the good cabbages are gone and the caterpillar is completely
+		 * out of the garden, the game ends in a win
+		 */
 		if (objectives.isEmpty() && cp.isOutsideGarden(fence)) {
 			this.messageGameOver = "Congratulations, you win!";
 			endTheGame();
@@ -192,8 +226,9 @@ public class CaterpillarGame extends GWindowEventAdapter implements
 	}
 
 	/**
-	 * Moves the caterpillar according to the selection of the user i: NORTH, j:
-	 * WEST, k: EAST, m: SOUTH
+	 * Moves the caterpillar according to the selection of the user i or w:
+	 * NORTH, j or a: WEST, k or d: EAST, m or s: SOUTH (because PC gamers are
+	 * more used to these keys)
 	 * 
 	 * @param e
 	 *            the keyboard event
@@ -231,9 +266,10 @@ public class CaterpillarGame extends GWindowEventAdapter implements
 	 */
 	private void endTheGame() {
 		window.stopTimerEvents();
-		// messageGameOver is an instance String that
-		// describes the outcome of the game that just ended
-		// (e.g. congratulations! you win)
+		/*
+		 * messageGameOver is an instance String that describes the outcome of
+		 * the game that just ended
+		 */
 		boolean again = anotherGame(messageGameOver);
 		if (again) {
 			initializeGame();

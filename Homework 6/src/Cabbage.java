@@ -5,25 +5,30 @@ import java.awt.Point;
 import java.util.ArrayList;
 
 /**
- * An abstract class that contains all of the basic features of a cabbage. It
- * should be derived by any class that represents a cabbage. (complete, but you
- * can add other methods if you want)
+ * An abstract class that contains all of the basic features of a cabbage.
  */
 
 public abstract class Cabbage implements Collidable, CaterpillarGameConstants {
-	// The graphics window this Cabbage belongs to
+	/**
+	 * The graphics window this Cabbage belongs to
+	 */
 	protected GWindow window;
 
-	// The location of the center of this Cabbage in the graphics window
+	/**
+	 * The location of the center of this Cabbage in the graphics window
+	 */
 	protected Point center;
 
+	/**
+	 * The head of the cabbage
+	 */
 	protected Oval head;
 
 	/**
 	 * Creates a cabbage in the graphics window
 	 * 
 	 * @param window
-	 *            the GWindow this Cabbage belongs to
+	 *            the window this Cabbage belongs to
 	 * @param center
 	 *            the center Point of this Cabbage
 	 */
@@ -48,7 +53,7 @@ public abstract class Cabbage implements Collidable, CaterpillarGameConstants {
 	public abstract void isEatenBy(Caterpillar cp);
 
 	/**
-	 * Is this Point in this Cabbage?
+	 * Checks if this Point in this Cabbage
 	 * 
 	 * @param p
 	 *            the Point to check
@@ -67,21 +72,47 @@ public abstract class Cabbage implements Collidable, CaterpillarGameConstants {
 		return new Point(center);
 	}
 
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see Collidable#isCollision(Caterpillar)
+	 */
 	@Override
 	public boolean isCollision(Caterpillar cat) {
 		return isCollision(cat.getHead());
 	}
 
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see Collidable#isCollision(uwcse.graphics.Shape)
+	 */
 	@Override
 	public boolean isCollision(Shape head) {
 		return head.intersects(this.head);
 	}
 
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see Collidable#doCollideAction(Caterpillar)
+	 */
 	@Override
 	public void doCollideAction(Caterpillar cat) {
 		isEatenBy(cat);
 	}
 
+	/**
+	 * Spawns good cabbages
+	 * 
+	 * @param window
+	 *            the window the cabbages are drawn in
+	 * @param fence
+	 *            the area within the fence in which cabbages can be spawned
+	 * @param cabbages
+	 *            the cabbages to be drawn
+	 * @returns if the location is valid, spawn a cabbage
+	 */
 	public static Cabbage spawnGoodCabbage(GWindow window, Fence fence,
 			ArrayList<Cabbage> cabbages) {
 		Cabbage candidate = null;
@@ -93,6 +124,13 @@ public abstract class Cabbage implements Collidable, CaterpillarGameConstants {
 		return candidate;
 	}
 
+	/**
+	 * Checks to make sure the cabbages don't overlap
+	 * 
+	 * @param cabbages
+	 *            the cabbages in the array
+	 * @returns whether or not a space is occupied by another cabbage
+	 */
 	private boolean isValidPlacement(ArrayList<Cabbage> cabbages) {
 		for (Cabbage other : cabbages) {
 			if (this.head.intersects(other.head)) {
@@ -102,6 +140,17 @@ public abstract class Cabbage implements Collidable, CaterpillarGameConstants {
 		return true;
 	}
 
+	/**
+	 * Spawns bad cabbages
+	 * 
+	 * @param window
+	 *            the window the cabbages are drawn in
+	 * @param fence
+	 *            the area within the fence in which cabbages can be spawned
+	 * @param cabbages
+	 *            the cabbages to be drawn
+	 * @returns if the location is valid, spawn a cabbage
+	 */
 	public static Cabbage spawnBadCabbage(GWindow window, Fence fence,
 			ArrayList<Cabbage> cabbages) {
 		Cabbage candidate = null;
@@ -112,7 +161,18 @@ public abstract class Cabbage implements Collidable, CaterpillarGameConstants {
 		candidate.draw();
 		return candidate;
 	}
-	
+
+	/**
+	 * Spawns psychedellic cabbages
+	 * 
+	 * @param window
+	 *            the window the cabbages are drawn in
+	 * @param fence
+	 *            the area within the fence in which cabbages can be spawned
+	 * @param cabbages
+	 *            the cabbages to be drawn
+	 * @returns if the location is valid, spawn a cabbage
+	 */
 	public static Cabbage spawnPsychedelicCabbage(GWindow window, Fence fence,
 			ArrayList<Cabbage> cabbages) {
 		Cabbage candidate = null;
@@ -124,12 +184,17 @@ public abstract class Cabbage implements Collidable, CaterpillarGameConstants {
 		return candidate;
 	}
 
+	/**
+	 * Creates a new cabbage head
+	 * 
+	 * @param color
+	 *            the color of the cabbage heads
+	 */
 	public void makeHead(Color color) {
 		head = new Oval(this.center.x - CABBAGE_RADIUS / 2, this.center.y
 				- CABBAGE_RADIUS / 2, CABBAGE_RADIUS, CABBAGE_RADIUS, color,
 				true);
 
 	}
-
 
 }

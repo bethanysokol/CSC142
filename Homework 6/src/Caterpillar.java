@@ -5,26 +5,39 @@ import java.util.*;
 import java.awt.Color;
 
 /**
- * A Caterpillar is the representation and the display of a caterpillar
+ * The representation and the display of a caterpillar
  */
 
 public class Caterpillar extends Deadly implements CaterpillarGameConstants {
 
-	// Store the graphical elements of the caterpillar body
-	// Useful to erase the body of the caterpillar on the screen
+	/**
+	 * Store the graphical elements of the caterpillar body
+	 */
 	private ArrayList<Shape> body = new ArrayList<Shape>();
 
-	// The window the caterpillar belongs to
+	/**
+	 * The window the caterpillar belongs to
+	 */
 	private GWindow window;
 
-	// Direction of motion of the caterpillar (NORTH initially)
+	/**
+	 * Direction of motion of the caterpillar (NORTH initially)
+	 */
 	private int dir = NORTH;
 
-	// obstacles that the caterpillar is aware of
+	/**
+	 * obstacles that the caterpillar is aware of
+	 */
 	private List<Collidable> obstacles;
 
+	/**
+	 * The thickness of the caterpillar
+	 */
 	private static final int thickness = 10;
 
+	/**
+	 * List of directions used in determining a bad direction
+	 */
 	private static final int[] directions = { NORTH, EAST, SOUTH, WEST };
 
 	/**
@@ -53,34 +66,37 @@ public class Caterpillar extends Deadly implements CaterpillarGameConstants {
 					Color.ORANGE, true));
 			p = q;
 		}
-
-		// Other initializations (if you have more instance fields)
-
+		// message to display if caterpillar crawls over itself
 		this.collideMessage = "Don't crawl over yourself!";
-		// Display the caterpillar (call a private method)
+		// Display the caterpillar
 		update();
 	}
 
+	/**
+	 * Displays the caterpillar
+	 */
 	private void update() {
+		// remove caterpillar from window
 		for (Shape s : body) {
 			window.remove(s);
 		}
+		// add caterpillar to window
 		for (Shape s : body) {
 			window.add(s);
 		}
 	}
 
 	/**
-	 * Moves the caterpillar in the current direction (complete)
+	 * Moves the caterpillar in the current direction
 	 */
 	public void move() {
 		move(dir);
 	}
 
 	/**
-	 * Move the caterpillar in the direction newDir. <br>
-	 * If the new direction is illegal, select randomly a legal direction of
-	 * motion and move in that direction.<br>
+	 * Move the caterpillar in the direction newDir. If the new direction is
+	 * illegal, select randomly a legal direction of motion and move in that
+	 * direction.
 	 * 
 	 * @param newDir
 	 *            the new direction.
@@ -93,12 +109,23 @@ public class Caterpillar extends Deadly implements CaterpillarGameConstants {
 		window.remove(tail);
 	}
 
+	/**
+	 * Add the new body segment to the caterpillar
+	 * 
+	 * @param newDir
+	 *            the new direction
+	 */
 	public void growNewHead(int newDir) {
 		Shape oldHead = getHead();
 		Shape newHead = null;
+		/*
+		 * if the caterpillar is moved in an illegal direction, automatically
+		 * moves it in the opposite direction
+		 */
 		HashSet<Integer> knownBadDirs = new HashSet<Integer>();
 		knownBadDirs.add(getOppositeDirection());
 		do {
+			// x, y coordinates of the body as well as the width and height
 			int x = oldHead.getX();
 			int y = oldHead.getY();
 			int w = oldHead.getWidth();
@@ -107,6 +134,7 @@ public class Caterpillar extends Deadly implements CaterpillarGameConstants {
 				knownBadDirs.add(newDir);
 				newDir = selectNewRandomDir(knownBadDirs);
 			}
+			// caterpillar movement for each direction
 			if (newDir == NORTH) {
 
 				if (dir == EAST) {
@@ -139,6 +167,7 @@ public class Caterpillar extends Deadly implements CaterpillarGameConstants {
 				h = thickness;
 
 			}
+			// adds a new segment to the caterpillar
 			newHead = new Rectangle(x, y, w, h, Color.ORANGE, true);
 		} while (!isSafeDirection(newHead, newDir));
 		dir = newDir;
@@ -147,13 +176,30 @@ public class Caterpillar extends Deadly implements CaterpillarGameConstants {
 		window.add(newHead);
 	}
 
+	/**
+	 * Determines if there is an obstacle free path
+	 * 
+	 * @param newHead
+	 *            the new head of the caterpillar
+	 * @param newDir
+	 *            the new direction of movement
+	 * @return if it is a safe direction to move in
+	 */
 	public boolean isSafeDirection(Shape newHead, int newDir) {
+		/*
+		 * if the x or y coordinate is less than 0, the caterpillar is out of
+		 * the window.
+		 */
 		boolean offEdge = newHead.getX() < 0 || newHead.getY() < 0
-				|| newHead.getY() > window.getWindowHeight()-STEP
-				|| newHead.getX() > window.getWindowWidth()-STEP;
+				|| newHead.getY() > window.getWindowHeight() - STEP
+				|| newHead.getX() > window.getWindowWidth() - STEP;
+		/*
+		 * check if the caterpillar tries to double back on itself
+		 */
 		boolean doubledBack = ((newDir == NORTH && dir == SOUTH)
 				|| (newDir == SOUTH && dir == NORTH)
 				|| (newDir == EAST && dir == WEST) || (newDir == WEST && dir == EAST));
+		// check to see if the caterpillar has hit an obstacle
 		boolean hitObstacle = false;
 		obstacleCheck: for (Collidable c : obstacles) {
 			if (c.isCollision(newHead)) {
@@ -161,6 +207,10 @@ public class Caterpillar extends Deadly implements CaterpillarGameConstants {
 				break obstacleCheck;
 			}
 		}
+		/*
+		 * if the caterpillar is in the window, not hitting an obstacle and not
+		 * doubling back on itself, then it can move safely
+		 */
 		return !doubledBack && !offEdge && !hitObstacle;
 	}
 
@@ -176,7 +226,7 @@ public class Caterpillar extends Deadly implements CaterpillarGameConstants {
 	}
 
 	/**
-	 * Are all of the points of the caterpillar outside the garden
+	 * Are all of the points of the caterpillar outside the garden?
 	 * 
 	 * @return true if the caterpillar is outside the garden and false
 	 *         otherwise.
@@ -192,7 +242,7 @@ public class Caterpillar extends Deadly implements CaterpillarGameConstants {
 	}
 
 	/**
-	 * Return the location of the head of the caterpillar (complete)
+	 * Return the location of the head of the caterpillar.
 	 * 
 	 * @return the location of the head of the caterpillar.
 	 */
@@ -202,7 +252,7 @@ public class Caterpillar extends Deadly implements CaterpillarGameConstants {
 	}
 
 	/**
-	 * Return the location of the head of the caterpillar (complete)
+	 * Return the location of the head of the caterpillar
 	 * 
 	 * @return the location of the head of the caterpillar.
 	 */
@@ -214,18 +264,28 @@ public class Caterpillar extends Deadly implements CaterpillarGameConstants {
 	}
 
 	/**
-	 * Increase the length of the caterpillar (by GROWTH_SPURT elements) Add the
-	 * elements at the tail of the caterpillar.
+	 * Increase the length of the caterpillar. Add the elements at the tail of
+	 * the caterpillar.
 	 */
 	public void grow() {
 		growNewHead(dir);
 	}
 
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see Collidable#isCollision(Caterpillar)
+	 */
 	@Override
 	public boolean isCollision(Caterpillar cat) {
 		return isCrawlingOverItself();
 	}
 
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see Collidable#isCollision(uwcse.graphics.Shape)
+	 */
 	@Override
 	public boolean isCollision(Shape bufferedHead) {
 		// Is the head point equal to any other point of the caterpillar?
@@ -236,9 +296,13 @@ public class Caterpillar extends Deadly implements CaterpillarGameConstants {
 				return true;
 			}
 		}
-		return false; // CHANGE THIS!
+		return false;
 	}
 
+	/**
+	 * If the caterpillar has eaten a psychadellic cabbage, randomly change the
+	 * colors of the caterpillar
+	 */
 	public void psych() {
 		for (Shape s : body) {
 			s.setColor(generateRandomColor());
@@ -246,18 +310,27 @@ public class Caterpillar extends Deadly implements CaterpillarGameConstants {
 	}
 
 	/**
-	 * Generates a random color to use in the pie, stripes and snow flake.
+	 * Generates a random color to use on the caterpillar.
 	 * 
 	 * @return the random color generated
 	 */
 	public Color generateRandomColor() {
 		// Generates the color randomly
 		int red = (int) (256 * Math.random());
-		int green = (int) (128 * Math.random());// ************* don't forget
+		// cut the green by half to make it stand out against the grass better
+		int green = (int) (128 * Math.random());
 		int blue = (int) (256 * Math.random());
 		return new Color(red, green, blue);
 	}
 
+	/**
+	 * Selects a new direction for the caterpillar to move in if it tries to
+	 * move to a bad location.
+	 * 
+	 * @param knownBadDirs
+	 *            if a direction is known to be illegal
+	 * @return the new direction to move in
+	 */
 	public int selectNewRandomDir(HashSet<Integer> knownBadDirs) {
 		int index = (int) (Math.random() * directions.length);
 		int newDir = (int) knownBadDirs.toArray()[0];
@@ -273,6 +346,10 @@ public class Caterpillar extends Deadly implements CaterpillarGameConstants {
 
 	}
 
+	/**
+	 * 
+	 * @return
+	 */
 	private int getOppositeDirection() {
 		int retVal = -1;
 		if (dir == SOUTH) {
@@ -287,6 +364,9 @@ public class Caterpillar extends Deadly implements CaterpillarGameConstants {
 		return retVal;
 	}
 
+	/**
+	 * Selects a new direction if the current direction is illegal
+	 */
 	public void selectNewRandomDir() {
 		HashSet<Integer> knownBadDir = new HashSet<Integer>();
 		knownBadDir.add(dir);
