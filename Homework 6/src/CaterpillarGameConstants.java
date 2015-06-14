@@ -27,9 +27,12 @@ public interface CaterpillarGameConstants {
 
 	// Number of bad cabbages
 	public static final int N_BAD_CABBAGES = 10;
+	
+	// Number of psychedelic cabbages
+	public static final int N_PSYCHEDELIC_CABBAGES = 4;
 
 	// Radius of a cabbage head
-	public static final int CABBAGE_RADIUS = 10;
+	public static final int CABBAGE_RADIUS = 20;
 
 	// Size of the graphics window
 	public static final int WINDOW_HEIGHT = 500;
@@ -37,5 +40,5 @@ public interface CaterpillarGameConstants {
 	public static final int WINDOW_WIDTH = 500;
 
 	// Period of the animation (in ms)
-	public static final int ANIMATION_PERIOD = 30;
+	public static final int ANIMATION_PERIOD = 300;
 }

@@ -13,10 +13,7 @@ import java.awt.Point;
 
 /**
  * Construct a window to display the graphics elements received from
- * GraphicsElements. This class is complete. Don't modify it. It is also not
- * necessary for you to understand this code.<br>
- * To test your program, either select main by right clicking on the class icon,
- * or instantiate a ViewWindow object.
+ * GraphicsElements.
  */
 
 public class ViewWindow extends JPanel implements ActionListener {
@@ -40,6 +37,7 @@ public class ViewWindow extends JPanel implements ActionListener {
 	private JFrame frame;
 
 	// Other elements in the window
+
 	// Radio buttons (with their title)
 	private String[] titles;
 
@@ -191,9 +189,9 @@ public class ViewWindow extends JPanel implements ActionListener {
 						arcAngle = Integer.parseInt(st.nextToken());
 				}
 
-				g.fillArc(arc.getX(), arc.getY(), arc.getWidth(), arc
-						.getHeight(), startAngle, arcAngle);
-				
+				g.fillArc(arc.getX(), arc.getY(), arc.getWidth(),
+						arc.getHeight(), startAngle, arcAngle);
+
 			}
 		} else if (this.which == ViewWindow.STRIPES) {
 			// Stripes
