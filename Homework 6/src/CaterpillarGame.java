@@ -13,16 +13,14 @@ import javax.swing.JOptionPane;
  * caterpillar has left the garden. The player loses if the caterpillar eats a
  * bad cabbage or crawls over itself.
  * 
- * @author Bethany Dubeck
- */
-
-public class CaterpillarGame extends GWindowEventAdapter implements
-		CaterpillarGameConstants
-/*
  * The class inherits from GWindowEventAdapter so that it can handle key events
  * (in the method keyPressed), and timer events.
+ * 
+ * @author Bethany Dubeck
  */
-{
+public class CaterpillarGame extends GWindowEventAdapter implements
+		CaterpillarGameConstants{
+	
 	/**
 	 * The window the game is in
 	 */
@@ -51,6 +49,7 @@ public class CaterpillarGame extends GWindowEventAdapter implements
 	/**
 	 * Is the current game over?
 	 */
+	@SuppressWarnings("unused")
 	private boolean gameOver;
 
 	/**
@@ -136,6 +135,7 @@ public class CaterpillarGame extends GWindowEventAdapter implements
 		fence = new Fence(window, 50, 100);
 		fence.draw();
 		obstacles.add(fence);
+		@SuppressWarnings("unchecked")
 		List<Collidable> caterpillarAwareObstacles = (List<Collidable>) obstacles
 				.clone();
 

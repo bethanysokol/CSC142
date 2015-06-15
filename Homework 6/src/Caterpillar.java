@@ -7,7 +7,6 @@ import java.awt.Color;
 /**
  * The representation and the display of a caterpillar
  */
-
 public class Caterpillar extends Deadly implements CaterpillarGameConstants {
 
 	/**
@@ -120,7 +119,7 @@ public class Caterpillar extends Deadly implements CaterpillarGameConstants {
 		Shape newHead = null;
 		/*
 		 * if the caterpillar is moved in an illegal direction, automatically
-		 * moves it in the opposite direction
+		 * moves it in a random valid direction
 		 */
 		HashSet<Integer> knownBadDirs = new HashSet<Integer>();
 		knownBadDirs.add(getOppositeDirection());
@@ -199,7 +198,7 @@ public class Caterpillar extends Deadly implements CaterpillarGameConstants {
 		boolean doubledBack = ((newDir == NORTH && dir == SOUTH)
 				|| (newDir == SOUTH && dir == NORTH)
 				|| (newDir == EAST && dir == WEST) || (newDir == WEST && dir == EAST));
-		// check to see if the caterpillar has hit an obstacle
+		// check to see if the caterpillar has hit a known/non-deadly obstacle
 		boolean hitObstacle = false;
 		obstacleCheck: for (Collidable c : obstacles) {
 			if (c.isCollision(newHead)) {
@@ -348,7 +347,9 @@ public class Caterpillar extends Deadly implements CaterpillarGameConstants {
 
 	/**
 	 * 
-	 * @return
+	 * Gets the opposite movement direction for the random direction selection.
+	 * 
+	 * @return the opposite direction
 	 */
 	private int getOppositeDirection() {
 		int retVal = -1;

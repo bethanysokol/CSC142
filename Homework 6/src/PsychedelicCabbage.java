@@ -5,7 +5,7 @@ import uwcse.graphics.GWindow;
 import uwcse.graphics.Oval;
 
 /**
- * Psychedelic cabbages that make the caterpillar change colors and grown upon
+ * Psychedelic cabbages that make the caterpillar change colors and grow upon
  * being eaten.
  *
  */
@@ -45,7 +45,7 @@ public class PsychedelicCabbage extends Cabbage {
 		middleHead = new Oval(this.center.x - headSize / 2, this.center.y
 				- headSize / 2, headSize, headSize, Color.WHITE, true);
 		// further decreasing the size of the next oval
-		headSize = CABBAGE_RADIUS / 4;
+		headSize /= 2;
 		centerHead = new Oval(this.center.x - headSize / 2, this.center.y
 				- headSize / 2, headSize, headSize, Color.BLACK, true);
 		// add the ovals to the window

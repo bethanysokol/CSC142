@@ -7,8 +7,8 @@ import java.util.ArrayList;
 /**
  * An abstract class that contains all of the basic features of a cabbage.
  */
-
 public abstract class Cabbage implements Collidable, CaterpillarGameConstants {
+	
 	/**
 	 * The graphics window this Cabbage belongs to
 	 */
@@ -25,7 +25,7 @@ public abstract class Cabbage implements Collidable, CaterpillarGameConstants {
 	protected Oval head;
 
 	/**
-	 * Creates a cabbage in the graphics window
+	 * Creates a cabbage that can latrer be drawn in the graphics window
 	 * 
 	 * @param window
 	 *            the window this Cabbage belongs to
@@ -103,7 +103,23 @@ public abstract class Cabbage implements Collidable, CaterpillarGameConstants {
 	}
 
 	/**
-	 * Spawns good cabbages
+	 * Checks to make sure the cabbages don't overlap
+	 * 
+	 * @param cabbages
+	 *            the cabbages in the array
+	 * @returns whether or not a space is occupied by another cabbage
+	 */
+	private boolean isValidPlacement(ArrayList<Cabbage> cabbages) {
+		for (Cabbage other : cabbages) {
+			if (this.head.intersects(other.head)) {
+				return false;
+			}
+		}
+		return true;
+	}
+
+	/**
+	 * Spawns a good cabbage within the fenced area without overlapping any of the existing cabbages
 	 * 
 	 * @param window
 	 *            the window the cabbages are drawn in
@@ -125,23 +141,7 @@ public abstract class Cabbage implements Collidable, CaterpillarGameConstants {
 	}
 
 	/**
-	 * Checks to make sure the cabbages don't overlap
-	 * 
-	 * @param cabbages
-	 *            the cabbages in the array
-	 * @returns whether or not a space is occupied by another cabbage
-	 */
-	private boolean isValidPlacement(ArrayList<Cabbage> cabbages) {
-		for (Cabbage other : cabbages) {
-			if (this.head.intersects(other.head)) {
-				return false;
-			}
-		}
-		return true;
-	}
-
-	/**
-	 * Spawns bad cabbages
+	 * Spawns a deadly cabbage within the fenced area without overlapping any of the existing cabbages
 	 * 
 	 * @param window
 	 *            the window the cabbages are drawn in
@@ -163,7 +163,7 @@ public abstract class Cabbage implements Collidable, CaterpillarGameConstants {
 	}
 
 	/**
-	 * Spawns psychedellic cabbages
+	 * Spawns a psychadelic cabbage within the fenced area without overlapping any of the existing cabbages
 	 * 
 	 * @param window
 	 *            the window the cabbages are drawn in

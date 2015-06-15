@@ -1,7 +1,6 @@
 /**
  * Interface that lists useful constants for the caterpillar game
  */
-
 public interface CaterpillarGameConstants {
 
 	/**

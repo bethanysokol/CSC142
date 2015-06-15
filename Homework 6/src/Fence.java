@@ -14,40 +14,50 @@ public class Fence implements Collidable {
 	 * An array of the individual sections of the fence
 	 */
 	private ArrayList<Shape> fenceRails;
+
 	/**
 	 * The window the fence is drawn in
 	 */
 	private GWindow window;
+
 	/**
 	 * The width of the grass outside of the fenced area
 	 */
 	private int lawnWidth;
+
 	/**
 	 * The size of the opening in the fence
 	 */
 	private int fenceOpening;
+
 	/**
 	 * The left side of the garden
 	 */
 	private int gardenL;
+
 	/**
 	 * The top side of the garden
 	 */
 	private int gardenT;
+
 	/**
 	 * The right side of the garden
 	 */
 	private int gardenR;
+
 	/**
 	 * The bottom side of the garden
 	 */
 	private int gardenB;
+
 	/**
 	 * The thickness of a fence section
 	 */
 	private int thickness;
 
 	/**
+	 * Make a fence.
+	 * 
 	 * @param window
 	 *            the window the fence is drawn in
 	 * @param fenceOpening
@@ -70,7 +80,7 @@ public class Fence implements Collidable {
 	}
 
 	/**
-	 * 
+	 * Draws a fence.
 	 */
 	public void draw() {
 		int height = window.getWindowHeight();
@@ -88,11 +98,11 @@ public class Fence implements Collidable {
 		fenceRails.add(new Rectangle(lawnWidth, window.getWindowHeight()
 				- thickness, width, thickness, Color.BLACK, true));
 
-		// fence left with opening
+		// fence left top with opening
 		fenceRails.add(new Rectangle(lawnWidth, 0, thickness,
 				((height - this.fenceOpening) / 2), Color.BLACK, true));
 
-		// right with opening
+		// frence left bottom with opening
 		fenceRails.add(new Rectangle(lawnWidth,
 				((height + this.fenceOpening) / 2), thickness,
 				((height - this.fenceOpening) / 2), Color.BLACK, true));
@@ -132,6 +142,7 @@ public class Fence implements Collidable {
 	 * @returns the size of the garden
 	 */
 	public Rectangle getGardenBox() {
+		// adding/subtracting for area based on the fence
 		return new Rectangle(gardenL + 1, gardenT + 1, gardenR - gardenL - 2,
 				gardenB - gardenT - 2);
 	}
@@ -156,8 +167,9 @@ public class Fence implements Collidable {
 		boolean collision = false;
 		for (Shape line : fenceRails) {
 			/*
-			 * when there is a collision, or the caterpillar head would
-			 * intersect the fence
+			 * If already a collision, don't check for another collision. When
+			 * there is a collision, or the caterpillar head would intersect the
+			 * fence
 			 */
 			collision = collision || line.intersects(head);
 		}

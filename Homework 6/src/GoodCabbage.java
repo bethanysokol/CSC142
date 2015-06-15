@@ -7,13 +7,17 @@ import uwcse.graphics.GWindow;
 /**
  * Good cabbages that make the caterpillar grow upon being eaten.
  *
- * @param window
- *            the window the cabbages are drawn in
- * @param center
- *            the center point of the cabbage
  */
 public class GoodCabbage extends Cabbage {
 
+	/**
+	 *Make good cabbages
+	 *
+	 * @param window
+	 *            the window the cabbages are drawn in
+	 * @param center
+	 *            the center point of the cabbage
+	 */
 	public GoodCabbage(GWindow window, Point center) {
 		super(window, center);
 

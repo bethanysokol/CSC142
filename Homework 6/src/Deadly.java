@@ -6,11 +6,14 @@
 public abstract class Deadly implements Collidable {
 
 	/**
-	 * Throws a message if a game ending collision were to occur (ie, eating a
-	 * bad cabbage)
+	 * message to present if a game ending collision were to occur (ie, wrapping
+	 * in on yourself)
 	 */
 	protected String collideMessage;
 
+	/* (non-Javadoc)
+	 * @see Collidable#doCollideAction(Caterpillar)
+	 */
 	@Override
 	public void doCollideAction(Caterpillar cat) {
 		// deadly collision occurred
